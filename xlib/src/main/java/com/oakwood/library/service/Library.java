@@ -86,9 +86,6 @@ public class Library {
           patron.receiveBook(book);
           notifyBookCheckedOut(patron, book);
           return true;
-        } else {
-          notifyCheckoutFailed(patron, title, "'" + title + "' is not available.");
-          return false;
         }
       }
     }

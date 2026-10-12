@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.oakwood.library.model.Book;
+import com.oakwood.library.event.LibraryEventListener;
 /**
  * Models a library member who can borrow books up to a fixed limit.
  *
@@ -18,7 +20,7 @@ import java.util.Objects;
  * @author Oakwood Reference Project
  * @version 1.0
  */
-public class Patron {
+public class Patron implements LibraryEventListener {
 
   /** Maximum number of books any patron may hold at the same time. */
   public static final int MAX_BORROW_LIMIT = 3;
@@ -29,7 +31,7 @@ public class Patron {
   /**
    * Creates a new library Patron with an empty list of borrowed books.
    *
-   * @param name the patron's name (cannot be null or blank)
+   * @param name the patron's name
    */
   public Patron(String name) {
     if (name == null || name.trim().isEmpty()) {
@@ -54,28 +56,26 @@ public class Patron {
    * @return {@code true} if current borrowed count &lt; 3; {@code false} otherwise
    */
   public boolean canBorrow() {
-    return borrowedBooks.size() < MAX_BORROW_LIMIT;
+    return borrowedBooks.size() < MAX_BORROW_LIMIT; 
   }
 
   /**
    * Receives a book reference and appends it to the patron's borrowed list.
    *
    * @param book the book to borrow (must not be null)
-   * @throws IllegalStateException if the patron has already reached maximum limit
-   * @throws IllegalArgumentException if the book is null or already held
+   * @throws IllegalStateException if patron reached borrow limit
+   * @throws IllegalArgumentException if book is null or duplicate
    */
   public void receiveBook(Book book) {
-    if (book == null) {
-      throw new IllegalArgumentException("Cannot receive a null book reference.");
+    if(book == null) {
+      throw new IllegalArgumentException("book name cannot be null");
+    } else if(!canBorrow()) {
+      throw new IllegalStateException("patron has too many books");
+    } else if (borrowedBooks.contains(book)) {
+      throw new IllegalArgumentException("patron already has this book");
+    } else {
+      borrowedBooks.add(book);
     }
-    if (!canBorrow()) {
-      throw new IllegalStateException(
-          name + " has reached the maximum borrowing limit of " + MAX_BORROW_LIMIT + " books.");
-    }
-    if (borrowedBooks.contains(book)) {
-      throw new IllegalArgumentException(name + " already holds a reference to " + book);
-    }
-    borrowedBooks.add(book);
   }
 
   /**
@@ -85,8 +85,8 @@ public class Patron {
    * @return {@code true} if the book was held and successfully removed; {@code false} otherwise
    */
   public boolean returnBook(Book book) {
-    return borrowedBooks.remove(book);
-  }
+     return borrowedBooks.remove(book);
+    }
 
   /**
    * Checks whether the patron is currently holding a specific book.
@@ -95,7 +95,7 @@ public class Patron {
    * @return {@code true} if held, {@code false} otherwise
    */
   public boolean hasBook(Book book) {
-    return borrowedBooks.contains(book);
+    return borrowedBooks.contains(book); 
   }
 
   /**
@@ -104,7 +104,7 @@ public class Patron {
    * @return unmodifiable list of borrowed books
    */
   public List<Book> getBorrowedBooks() {
-    return Collections.unmodifiableList(borrowedBooks);
+    return Collections.unmodifiableList(borrowedBooks); 
   }
 
   /**
@@ -113,7 +113,7 @@ public class Patron {
    * @return count of borrowed books
    */
   public int getBorrowCount() {
-    return borrowedBooks.size();
+    return borrowedBooks.size(); 
   }
 
   /**
@@ -121,6 +121,33 @@ public class Patron {
    */
   public void showBorrowedBooks() {
     System.out.println(name + "'s Borrowed Books: " + borrowedBooks);
+  }
+
+  @Override 
+  public void onBookAdded(Book book) {
+    System.out.println(name + " now knows that " + book.getTitle() + " is added.");
+  }
+
+  @Override 
+  public void onBookCheckedOut(Patron patron, Book book) {
+    System.out.println(name + " now knows that " + book.getTitle() + " is checked out.");
+
+  }
+
+  @Override 
+  public void onCheckoutFailed(Patron patron, String title, String reason) {
+    System.out.println(name + " now knows that " + title + "'s' chekcout failed because " + reason);
+  }
+
+  @Override 
+  public void onBookReturned(Patron patron, Book book, double lateFee) {
+    System.out.printf("%s now knows that %s is returned with late fee %f\n", name, book.getTitle(), lateFee);
+
+  }
+
+  @Override 
+  public void onReturnFailed(Patron patron, String title, String reason) {
+    System.out.printf("%s now knows that %s has failed to return because of %s\n.", name, title, reason);
   }
 
   @Override
