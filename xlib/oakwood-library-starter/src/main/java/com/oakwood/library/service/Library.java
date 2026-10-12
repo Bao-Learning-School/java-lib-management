@@ -48,6 +48,12 @@ public class Library {
    * @param book the book to register
    */
   public void addBook(Book book) {
+    if (book == null) {
+      throw new IllegalArgumentException("cannot adda a null book to catalog");
+    } else {
+      catalog.add(book);
+      notifyBookAdded(book);
+    }
     // TODO: Task 6.1 - Implement addBook:
     // 1. If book is null, throw new IllegalArgumentException("Cannot add a null book to catalog.");
     // 2. Add book to 'catalog' list.
@@ -65,6 +71,26 @@ public class Library {
     if (title == null || patron == null) {
       throw new IllegalArgumentException("Title and patron must not be null.");
     }
+    if (!patron.canBorrow()) {
+      String reason = patron.getName() + " has reached the borrow limit of " + Patron.MAX_BORROW_LIMIT + " books.";
+      notifyCheckoutFailed(patron, title, reason);
+      return false;
+    }
+
+    String trimedTitle = title.trim();
+    for (Book book : catalog) {
+      if (book.getTitle().equalsIgnoreCase(trimedTitle)) {
+        if (book.isAvailable()) {
+          book.setAvailable(false);
+          patron.receiveBook(book);
+          notifyBookCheckedOut(patron, book);
+          return true;
+        }
+      }
+    }
+
+    notifyCheckoutFailed(patron, title, "'" + title + "' is not available.");
+    return false;
 
     // TODO: Task 6.2 - Implement checkoutBook:
     // Step A (Rule Check): Check if patron.canBorrow() is false!
@@ -88,8 +114,6 @@ public class Library {
     // Step C: If no book with this title was found in catalog:
     //      - notifyCheckoutFailed(patron, title, "'" + title + "' is not available.");
     //      - return false;
-
-    return false; // Replace this line with your code
   }
 
   /**
@@ -100,9 +124,9 @@ public class Library {
    * @return {@code true} if return succeeded; {@code false} otherwise
    */
   public boolean returnBook(String title, Patron patron) {
+    retrun returnBook(title, patron, 0) >= 0;
     // TODO: Task 6.3 - Delegate to returnBook(title, patron, 0):
     // If fee >= 0.0, return true; otherwise return false.
-    return false; // Replace this line with your code
   }
 
   /**
@@ -128,6 +152,20 @@ public class Library {
       throw new IllegalArgumentException("Title and patron must not be null.");
     }
 
+    for (Book book : catalog) {
+      if (book.getTitle().equalsIgnoreCase(title.trim()) && !book.isAvailable()) {
+        if (patron.returnBook(book)) {
+          book.setAvailable(true);
+          double lateFee = feeCalculator(daysKept, book.getDueDays());
+          notifyBookReturned(patron, book, lateFee);
+          return lateFee;
+        } else {
+          notifyReturnFailed(patron, title, patron.getName() + " does not have this book");
+          return -1.0;
+        }
+      }
+    }
+
     // TODO: Task 6.4 - Implement processReturn:
     // Step A: Loop through 'catalog':
     //      If book.getTitle().equalsIgnoreCase(title.trim()) && !book.isAvailable():
@@ -147,6 +185,7 @@ public class Library {
     //            patron, title, "Book '" + title + "' not found in library records.");
     //      - return -1.0;
 
+    notifyReturnFailed(patron, title, patron.getName() + " does not have this book");
     return -1.0; // Replace this line with your code
   }
 

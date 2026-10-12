@@ -38,6 +38,7 @@ public class Main {
    * @param args command-line arguments (unused)
    */
   public static void main(String[] args) {
+    
     System.out.println("================================================================");
     System.out.println("   WELCOME TO OAKWOOD PUBLIC LIBRARY - OBJECT-ORIENTED JOURNEY  ");
     System.out.println("================================================================\n");
@@ -48,6 +49,8 @@ public class Main {
     System.out.println("--- 1. MORNING SETUP: Opening Oakwood Library ---");
     System.out.println("[Concept: Instantiation - Memory allocated on Heap for catalog]");
     Library oakwood = new Library();
+    Patron alex = new Patron("Alex");
+    oakwood.addListener(alex);
 
     Book javaBook = new Book("Effective Java", "Joshua Bloch");
     Book duneBook = new Book("Dune", "Frank Herbert");
@@ -65,6 +68,7 @@ public class Main {
     System.out.println("\n--- 2. 10:00 AM: Alex registers for a card ---");
     System.out.println("[Concept: Patron Instantiation - Alex sits in memory with empty list]");
     Patron alex = new Patron("Alex");
+    oakwood.addListener(alex);
 
     // -------------------------------------------------------------
     // Step 3: First Checkout (Passing Reference & State Mutation)

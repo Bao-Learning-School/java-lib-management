@@ -23,8 +23,8 @@ public class Book {
   private final String title;
   private final String author;
   private boolean isAvailable;
-  private int dueDays;~
-`
+  private int dueDays;
+
   /**
    * Creates a new Book with the default loan period of 14 days.
    *
@@ -82,9 +82,7 @@ public class Book {
    * @return {@code true} if available; {@code false} if already borrowed
    */
   public boolean isAvailable() {
-    // TODO: Task 1.1 - Return the current availability status of this book.
-    // Hint: Look at the private field 'isAvailable'.
-    return false; // Replace this line with your code
+    return isAvailable;
   }
 
   /**
@@ -93,8 +91,7 @@ public class Book {
    * @param available {@code true} when returned to shelf, {@code false} when checked out
    */
   public void setAvailable(boolean available) {
-    // TODO: Task 1.2 - Mutate internal 'isAvailable' field to match the parameter.
-    // Hint: Use 'this.isAvailable = available;'
+    this.isAvailable = available;
   }
 
   /**
@@ -112,9 +109,11 @@ public class Book {
    * @param dueDays positive number of allowed loan days
    */
   public void setDueDays(int dueDays) {
-    // TODO: Task 1.3 - Validate that dueDays is greater than 0.
-    // If dueDays <= 0, throw new IllegalArgumentException("Due days must be greater than 0.");
-    // Otherwise, update 'this.dueDays'.
+    if(dueDays <= 0) {
+      throw new IllegalArgumentException("due days must be more than 0");
+    } else {
+      this.dueDays = dueDays;
+    }
   }
 
   /**
@@ -124,9 +123,7 @@ public class Book {
    */
   @Override
   public String toString() {
-    // TODO: Task 1.4 - Return the book formatted as: "'" + title + "' by " + author
-    // Example: "'The Hobbit' by J.R.R. Tolkien"
-    return ""; // Replace this line with your code
+    return "'" + title + "' by " + author;
   }
 
   @Override

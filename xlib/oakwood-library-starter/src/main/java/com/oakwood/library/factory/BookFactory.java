@@ -33,7 +33,7 @@ public final class BookFactory {
   private BookFactory() {
     // Utility class - prevent instantiation
   }
-
+  
   /**
    * Creates a regular fiction or non-fiction book with a 14-day loan period.
    *
@@ -43,7 +43,7 @@ public final class BookFactory {
    */
   public static Book createStandardBook(String title, String author) {
     // TODO: Task 4.1 - Return a new Book with title, author, and STANDARD_LOAN_DAYS.
-    return null; // Replace this line with your code
+    return new Book(title, author, STANDARD_LOAN_DAYS); // Replace this line with your code
   }
 
   /**
@@ -55,7 +55,7 @@ public final class BookFactory {
    */
   public static Book createBestseller(String title, String author) {
     // TODO: Task 4.2 - Return a new Book with title, author, and BESTSELLER_LOAN_DAYS.
-    return null; // Replace this line with your code
+    return new Book(title, author, BESTSELLER_LOAN_DAYS); // Replace this line with your code
   }
 
   /**
@@ -67,7 +67,7 @@ public final class BookFactory {
    */
   public static Book createReferenceBook(String title, String author) {
     // TODO: Task 4.3 - Return a new Book with title, author, and REFERENCE_LOAN_DAYS.
-    return null; // Replace this line with your code
+    return new Book(title, author, REFERENCE_LOAN_DAYS); // Replace this line with your code
   }
 
   /**
@@ -79,6 +79,6 @@ public final class BookFactory {
    */
   public static Book createChildrenBook(String title, String author) {
     // TODO: Task 4.4 - Return a new Book with title, author, and CHILDREN_LOAN_DAYS.
-    return null; // Replace this line with your code
+    return new Book(title, author, CHILDREN_LOAN_DAYS); // Replace this line with your code
   }
 }

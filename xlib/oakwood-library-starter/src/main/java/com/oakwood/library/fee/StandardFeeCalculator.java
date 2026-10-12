@@ -39,11 +39,12 @@ public class StandardFeeCalculator implements FeeCalculator {
 
   @Override
   public double calculateFee(int daysKept, int dueDays) {
-    // TODO: Task 3.1 - Implement standard overdue fee calculation.
-    // 1. If daysKept <= dueDays, the book is on time! Return 0.0.
-    // 2. Otherwise, calculate daysOverdue = daysKept - dueDays.
-    // 3. Return daysOverdue * dailyRate.
-    return 0.0; // Replace this line with your code
+    if(daysKept<=dueDays) {
+      return 0.0;
+    } else {
+      int daysOverdue = daysKept - dueDays;
+      return daysOverdue * dailyRate;
+    }
   }
 
   @Override

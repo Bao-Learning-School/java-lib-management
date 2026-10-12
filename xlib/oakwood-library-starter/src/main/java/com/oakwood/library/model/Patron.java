@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.oakwood.library.model.Book;
+import com.oakwood.library.event.LibraryEventListener;
 /**
  * Models a library member who can borrow books up to a fixed limit.
  *
@@ -18,7 +20,7 @@ import java.util.Objects;
  * @author Oakwood Reference Project
  * @version 1.0
  */
-public class Patron {
+public class Patron implements LibraryEventListener {
 
   /** Maximum number of books any patron may hold at the same time. */
   public static final int MAX_BORROW_LIMIT = 3;
@@ -54,9 +56,7 @@ public class Patron {
    * @return {@code true} if current borrowed count &lt; 3; {@code false} otherwise
    */
   public boolean canBorrow() {
-    // TODO: Task 2.1 - Check if patron has room to borrow more books.
-    // Rule: A patron can borrow if borrowedBooks.size() is strictly less than MAX_BORROW_LIMIT.
-    return false; // Replace this line with your code
+    return borrowedBooks.size() < MAX_BORROW_LIMIT; 
   }
 
   /**
@@ -67,11 +67,15 @@ public class Patron {
    * @throws IllegalArgumentException if book is null or duplicate
    */
   public void receiveBook(Book book) {
-    // TODO: Task 2.2 - Implement book receiving logic:
-    // 1. If 'book' is null, throw IllegalArgumentException.
-    // 2. If !canBorrow(), throw IllegalStateException.
-    // 3. If borrowedBooks.contains(book), throw IllegalArgumentException.
-    // 4. Finally, add the book reference to the 'borrowedBooks' list!
+    if(book = null) {
+      throw new IllegalArgumentException("book name cannot be null");
+    } else if(!canBorrow()) {
+      throw new IllegalStateException("patron has too many books");
+    } else if (borrowedBooks.contains(book)) {
+      throw new IllegalArgumentException("patron already has this book");
+    } else {
+      borrowedBooks.add(book);
+    }
   }
 
   /**
@@ -81,10 +85,8 @@ public class Patron {
    * @return {@code true} if the book was held and successfully removed; {@code false} otherwise
    */
   public boolean returnBook(Book book) {
-    // TODO: Task 2.3 - Remove book from 'borrowedBooks' and return whether it was removed.
-    // Hint: ArrayList has a .remove(Object) method that returns boolean!
-    return false; // Replace this line with your code
-  }
+     return borrowedBooks.remove(book);
+    }
 
   /**
    * Checks whether the patron is currently holding a specific book.
@@ -93,8 +95,7 @@ public class Patron {
    * @return {@code true} if held, {@code false} otherwise
    */
   public boolean hasBook(Book book) {
-    // TODO: Task 2.4 - Return whether 'borrowedBooks' contains the given book.
-    return false; // Replace this line with your code
+    return borrowedBooks.contains(book); 
   }
 
   /**
@@ -103,9 +104,7 @@ public class Patron {
    * @return unmodifiable list of borrowed books
    */
   public List<Book> getBorrowedBooks() {
-    // TODO: Task 2.5 - Protect encapsulation by returning an unmodifiable list.
-    // Hint: Use Collections.unmodifiableList(borrowedBooks);
-    return null; // Replace this line with your code
+    return Collections.unmodifiableList(borrowedBooks); 
   }
 
   /**
@@ -114,8 +113,7 @@ public class Patron {
    * @return count of borrowed books
    */
   public int getBorrowCount() {
-    // TODO: Task 2.6 - Return the size of the 'borrowedBooks' list.
-    return 0; // Replace this line with your code
+    return borrowedBooks.size(); 
   }
 
   /**
@@ -123,6 +121,27 @@ public class Patron {
    */
   public void showBorrowedBooks() {
     System.out.println(name + "'s Borrowed Books: " + borrowedBooks);
+  }
+
+  @Override 
+  public void onBookAdded(Book book) {
+    System.out.println(name + " now knows that " + book.getTitle() + " is added.");
+  }
+
+  @Override 
+  public void onBookCheckedOut(Patron patron, Book book) {
+  }
+
+  @Override 
+  public void onCheckoutFailed(Patron patron, String title, String reason) {
+  }
+
+  @Override 
+  public void onBookReturned(Patron patron, String title, double lateFee) {
+  }
+
+  @Override 
+  public void onReturnFailed(Patron patron, String title, String reason) {
   }
 
   @Override
